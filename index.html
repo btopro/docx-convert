@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="Description" content="IST Vercel app example">
+  <title>Vercel example</title>
+
+  <base href="/">
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background-color: #ededed;
+    }
+    x-weather {
+      border: 1px solid black;
+    }
+  </style>
+  <title>ist-vercel-demo</title>
+</head>
+
+<body>
+  <x-weather city="pittsburgh"></x-weather>
+  <x-weather city="boston"></x-weather>
+  <x-weather city="portland"></x-weather>
+
+  <textarea id="response" rows="50" cols="50"></textarea>
+  <button id="refresh">Click to refresh</button>
+  <button id="user">Add user</button>
+  <script>
+    function updateData() {
+      console.log("here");
+      fetch("/api/db").then(res => res.json()).then((data) => {
+        document.querySelector("#response").value = JSON.stringify(data, null, 2);
+      });
+    }
+    // update response
+    document.querySelector("#refresh").addEventListener("click", (e) => {updateData();});
+    // add user response
+    document.querySelector("#user").addEventListener("click", (e) => {
+      const user = {
+        name: Math.random().toString(8).slice(2),
+        email: `${Math.random().toString(10).slice(2)}@${Math.random().toString(6).slice(2)}.com`,
+        password: Math.random().toString(16).slice(2),
+      };
+      console.log(user);
+      var queryString = Object.keys(user).map(key => key + '=' + user[key]).join('&');
+      fetch(`/api/addUser?${queryString}`).then(res => res.json()).then((data) => {
+        // update the data bc we just got a result that we added a user
+        updateData();
+      });
+    });
+  </script>
+
+  <lrnsys-comment-list></lrnsys-comment-list>
+
+  <script type="module" src="./src/x-weather.js"></script>
+  <script type="module" defer async>
+    // comment list
+    await import("@lrnwebcomponents/lrnsys-comment/lib/lrnsys-comment-list.js").then(() => {
+      fetch(`/api/comments?op=GET`).then(res => res.json()).then((comments) => 
+      {
+        document.querySelector("lrnsys-comment-list").comments = comments;
+      });
+    });
+  </script>
+</body>
+</html>
