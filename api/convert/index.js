@@ -1,6 +1,7 @@
 import df from 'mammoth';
 const { convertToHtml } = df;
 import busboy from 'busboy';
+import concat from "concat-stream";
 import { getBrowserInstance } from "../screenshot.js";
 
 export default async function handler(req, res) {
@@ -13,14 +14,13 @@ export default async function handler(req, res) {
   const bb = busboy({ headers: req.headers });
   bb.on('file', async (name, file, info) => {
     const { filename, encoding, mimeType } = info;
-    file.on('data', (data) => {
-      // we can only convert docx files
-      if (mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-        console.log(`Docx File [${name}] called ${filename} was ${data.length} bytes`);
+    if(filename.length > 0 && mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+      console.log(`Docx File [${name}] called ${filename}`);
+      file.pipe(concat((fileBuffer) => {
         buffer.filename = filename;
-        buffer.data = data;
-      }
-    });
+        buffer.data = fileBuffer;
+      }));
+    }
   });
   // file closed / finished
   bb.on('close', async () => {

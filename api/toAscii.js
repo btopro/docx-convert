@@ -1,5 +1,6 @@
 import asciify from 'asciify-image';
 import busboy from 'busboy';
+import concat from "concat-stream";
 
 export default async function handler(req, res) {
   var img = '';
@@ -10,14 +11,13 @@ export default async function handler(req, res) {
   const bb = busboy({ headers: req.headers });
   bb.on('file', async (name, file, info) => {
     const { filename, encoding, mimeType } = info;
-    file.on('data', (data) => {
-      // we can only convert docx files
-      if (mimeType.startsWith("image/") === true) {
-        console.log(`Docx File [${name}] called ${filename} was ${data.length} bytes`);
+    // ensure we have a filename
+    if(filename.length > 0 && mimeType.startsWith("image/") === true) {
+      file.pipe(concat((fileBuffer) => {
         buffer.filename = filename;
-        buffer.data = data;
-      }
-    });
+        buffer.data = fileBuffer;
+      }));
+    }
   });
   // file closed / finished
   bb.on('close', async () => {
