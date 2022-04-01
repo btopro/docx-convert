@@ -2,7 +2,6 @@ import chromium from 'chrome-aws-lambda'
 
 export async function getBrowserInstance() {
 	const executablePath = await chromium.executablePath
-
 	if (!executablePath) {
 		// running locally
 		const puppeteer = await import('puppeteer').then((m) => {
@@ -45,7 +44,7 @@ export default async function handler(req, res) {
   // capture options
   var browserGoToOptions = {
     timeout: 10000,
-    waitUntil: ['load', 'domcontentloaded', 'networkidle2'],
+    waitUntil: 'networkidle2',
   };
   var screenshotOptions = {
     quality: 75,
@@ -58,8 +57,6 @@ export default async function handler(req, res) {
     browser = await getBrowserInstance();
     let page = await browser.newPage();
     await page.goto(urlToCapture, browserGoToOptions);
-    // allow 300ms for loading of js assets
-    await new Promise(resolve => setTimeout(resolve, 300));
     // special support for isolating a tweet
     if (urlToCapture.includes('twitter.com')) {
       await page.waitForSelector("article[data-testid='tweet']");

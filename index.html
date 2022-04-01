@@ -7,7 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="Description" content="IST Vercel app example">
   <title>Convert Docx to HTML</title>
-
+  <script type="module">
+    import "./src/x-weather.js";
+  </script>
   <base href="/">
 
   <style>
@@ -21,17 +23,53 @@
     textarea {
       display: block;
     }
+    #asciihere {
+      background-color: black;
+      font-family: monospace;
+      white-space: pre;
+    }
   </style>
 </head>
 
 <body>
+  <label>Upload image file to get ASCII art</label>
+  <input type="file" id="ascii" />
+  <textarea id="asciiresponse" rows="10" cols="50"></textarea>
+  <h1>Ascii that was in the file upload</h1>
+  <pre id="asciihere"></pre>
+  <script>
+    const handleImageUpload = (event) => {
+      const files = event.target.files;
+      const formData = new FormData();
+      formData.append('upload', files[0]);
+
+      fetch('/api/toAscii', {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        document.querySelector("#asciihere").innerHTML = data.data.image;
+        document.querySelector("#asciiresponse").value = JSON.stringify(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+    // upload
+    document.querySelector("#ascii").addEventListener("change", (e) => {handleImageUpload(e);});
+  </script>
+
+
+
   <label>Upload Docx file to get HTML</label>
   <input type="file" id="upload" />
   <textarea id="response" rows="10" cols="50"></textarea>
   <h1>HTML that was in the file upload</h1>
   <div id="here"></div>
   <script>
-    const handleImageUpload = (event) => {
+    const handleDocXUpload = (event) => {
       const files = event.target.files;
       const formData = new FormData();
       formData.append('upload', files[0]);
@@ -52,8 +90,8 @@
         console.error(error);
       });
     }
-    // update response
-    document.querySelector("#upload").addEventListener("change", (e) => {handleImageUpload(e);});
+    // upload
+    document.querySelector("#upload").addEventListener("change", (e) => {handleDocXUpload(e);});
   </script>
 
 <label>Enter a URL to get a screenshot of it</label>

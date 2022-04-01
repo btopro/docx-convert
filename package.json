@@ -1,8 +1,8 @@
 {
-  "name": "ist-vercel-demo",
-  "description": "Webcomponent ist-vercel-demo following open-wc recommendations",
+  "name": "all-the-things-micro",
+  "description": "Webcomponent / micro front end demo following open-wc recommendations",
   "license": "MIT",
-  "author": "ist-vercel-demo",
+  "author": "btopro",
   "version": "0.0.0",
   "main": "index.js",
   "type": "module",
@@ -23,10 +23,12 @@
     "mammoth": "1.4.21",
     "busboy": "1.5.0",
     "puppeteer-core": "13.5.2",
-    "chrome-aws-lambda": "10.1.0"
+    "chrome-aws-lambda": "10.1.0",
+    "asciify-image": "0.1.8"
   },
   "devDependencies": {
     "puppeteer": "13.5.2",
+    "@open-wc/dev-server-hmr": "0.1.2",
     "@babel/preset-env": "^7.16.4",
     "@custom-elements-manifest/analyzer": "^0.4.17",
     "@open-wc/building-rollup": "^2.0.1",
