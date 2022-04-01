@@ -20,13 +20,13 @@ export async function getBrowserInstance() {
 	}
 
 	return chromium.puppeteer.launch({
-		args: chromium.args,
+		args: [...chromium.args, "--hide-scrollbars"],
 		defaultViewport: {
 			width: 1280,
 			height: 720
 		},
-		executablePath,
-		headless: chromium.headless,
+    executablePath: executablePath,
+		headless: true,
 		ignoreHTTPSErrors: true
 	});
 }
