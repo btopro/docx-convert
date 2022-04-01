@@ -53,5 +53,27 @@
     // update response
     document.querySelector("#upload").addEventListener("change", (e) => {handleImageUpload(e);});
   </script>
+
+<label>Enter a URL to get a screenshot of it</label>
+<input type="text" id="screenshot" />
+<button id="getthething">Get a screenshot</button>
+<h1>Image will appear here</h1>
+<img id="replaceimg" src="" alt="" />
+<script>
+  const getthething = (event) => {
+    const urlToCapture = document.querySelector('#screenshot').value;
+    fetch(`/api/screenshot?urlToCapture=${urlToCapture}`)
+    .then(response => response.json())
+    .then(data => {
+      document.querySelector("#replaceimg").src = `data:image/jpeg;base64, ${data.image}`;
+      document.querySelector("#replaceimg").alt = `screenshot of ${data.url}`;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  }
+  // update response
+  document.querySelector("#getthething").addEventListener("click", (e) => {getthething(e);});
+</script>
 </body>
 </html>
