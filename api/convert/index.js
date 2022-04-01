@@ -1,9 +1,11 @@
 import df from 'mammoth';
 const { convertToHtml } = df;
 import busboy from 'busboy';
+import { getBrowserInstance } from "../screenshot.js";
 
 export default async function handler(req, res) {
   var html = '';
+  var img = '';
   var buffer = {
     filename: null,
     data: null,
@@ -28,6 +30,26 @@ export default async function handler(req, res) {
         .then((result) => {
           return result.value; // The generated HTML
         });
+        // generate a screenshot of the HTML blob
+        // capture options
+        var screenshotOptions = {
+          quality: 75,
+          type: 'jpeg',
+          encoding: "base64"
+        };
+        let browser = null
+        try {
+          browser = await getBrowserInstance();
+          let page = await browser.newPage();
+          await page.setContent(html)
+          img = await page.screenshot(screenshotOptions)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            if (browser !== null) {
+                await browser.close()
+            }
+        }
       }
       catch(e) {
         // put in the output
@@ -35,8 +57,12 @@ export default async function handler(req, res) {
       }
     }
     res.json({
-      contents: html,
-      filename: buffer.filename,
+      status: "success",
+      data: {
+        contents: html,
+        filename: buffer.filename,
+        image: img
+      }
     });
   });
   req.pipe(bb);

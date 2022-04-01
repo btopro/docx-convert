@@ -43,8 +43,10 @@
       .then(response => response.json())
       .then(data => {
         console.log(data);
+        document.querySelector("#replaceimg").src = `data:image/jpeg;base64, ${data.data.image}`;
+        document.querySelector("#replaceimg").alt = `screenshot of the HTML of the file ${data.data.filename}`;
         document.querySelector("#response").value = JSON.stringify(data);
-        document.querySelector("#here").innerHTML = data.contents;
+        document.querySelector("#here").innerHTML = data.data.contents;
       })
       .catch(error => {
         console.error(error);
@@ -65,8 +67,8 @@
     fetch(`/api/screenshot?urlToCapture=${urlToCapture}`)
     .then(response => response.json())
     .then(data => {
-      document.querySelector("#replaceimg").src = `data:image/jpeg;base64, ${data.image}`;
-      document.querySelector("#replaceimg").alt = `screenshot of ${data.url}`;
+      document.querySelector("#replaceimg").src = `data:image/jpeg;base64, ${data.data.image}`;
+      document.querySelector("#replaceimg").alt = `screenshot of ${data.data.url}`;
     })
     .catch(error => {
       console.error(error);
