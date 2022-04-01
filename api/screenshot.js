@@ -8,7 +8,7 @@ export async function getBrowserInstance() {
 		const puppeteer = await import('puppeteer').then((m) => {
       return m.default;
     });
-		return puppeteer.launch({
+		return await puppeteer.launch({
 			args: chromium.args,
 			headless: true,
 			defaultViewport: {
@@ -19,20 +19,17 @@ export async function getBrowserInstance() {
 		});
 	}
 
-	return chromium.puppeteer.launch({
-		args: [...chromium.args, "--hide-scrollbars"],
-		defaultViewport: {
-			width: 1280,
-			height: 720
-		},
+	return await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
     executablePath: executablePath,
-		headless: true,
+		headless: chromium.headless,
 		ignoreHTTPSErrors: true
 	});
 }
 
 export default async function handler(req, res) {
-  const { urlToCapture } = req.query;
+  var { urlToCapture } = req.query;
   // Perform URL validation
   if (!urlToCapture || !urlToCapture.trim()) {
     res.json({
@@ -40,6 +37,11 @@ export default async function handler(req, res) {
         error: 'Enter a valid URL'
     })
   }
+  if (!urlToCapture.includes("https://")) {
+    // try to fake it
+    urlToCapture = `https://${urlToCapture}`;
+  }
+
   // capture options
   var browserGoToOptions = {
     timeout: 10000,
