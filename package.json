@@ -25,7 +25,8 @@
     "puppeteer-core": "13.5.2",
     "chrome-aws-lambda": "10.1.0",
     "asciify-image": "0.1.8",
-    "concat-stream": "2.0.0"
+    "concat-stream": "2.0.0",
+    "html-pdf": "3.0.1"
   },
   "devDependencies": {
     "puppeteer": "13.5.2",
